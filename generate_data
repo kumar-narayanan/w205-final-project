@@ -1,0 +1,165 @@
+#!/bin/bash
+
+# Generate data for project 3 using Apache Bench
+
+docker-compose exec mids \
+  ab \
+    -n 10 \
+    -H "Host: agitated_darwin.verizon.net" \
+    http://localhost:5000/
+
+sleep 10
+
+docker-compose exec mids \
+  ab \
+    -n 256 \
+    -H "Host: agitated_darwin.verizon.net" \
+    http://localhost:5000/purchase_knife
+
+sleep 10
+
+docker-compose exec mids \
+  ab \
+    -n 256 \
+    -H "Host: user4.verizon.net" \
+    http://localhost:5000/purchase_knife?uid=user4
+
+sleep 10
+
+docker-compose exec mids \
+  ab \
+    -n 320 \
+    -H "Host: agitated_darwin.verizon.net" \
+    http://localhost:5000/purchase_crossbow
+
+sleep 10
+
+docker-compose exec mids \
+  ab \
+    -n 256 \
+    -H "Host: user5.verizon.net" \
+    http://localhost:5000/purchase_crossbow?uid=user5
+
+sleep 10
+
+docker-compose exec mids \
+  ab \
+    -n 324 \
+    -H "Host: agitated_darwin.comcast.com" \
+    http://localhost:5000/purchase_sword
+
+sleep 10
+
+docker-compose exec mids \
+  ab \
+    -n 384 \
+    -H "Host: user7.verizon.net" \
+    http://localhost:5000/purchase_sword?uid=user7
+
+sleep 10
+
+docker-compose exec mids \
+  curl -d "name=Jot&uid=amanjotksamra&email=amanjotksamra@berkeley.edu" -X POST -H "Host: jot.comcast.com" http://localhost:5000/join_guild
+  
+sleep 1
+
+docker-compose exec mids \
+  curl -d "name=Patrick&uid=patold&email=patold@berkeley.edu" -X POST -H "Host: patold.comcast.com" http://localhost:5000/join_guild
+
+sleep 1
+
+docker-compose exec mids \
+  curl -d "name=kumarn&uid=kumarn&email=kumarn@berkeley.edu" -X POST -H "Host: kumarn.comcast.com" http://localhost:5000/join_guild
+
+sleep 1
+
+docker-compose exec mids \
+  curl -d "name=user_one&uid=user1&email=user1@berkeley.edu" -X POST -H "Host: user1.comcast.com" http://localhost:5000/join_guild
+
+sleep 1
+
+docker-compose exec mids \
+  curl -d "name=user_two&uid=user2&email=user2@berkeley.edu" -X POST -H "Host: user2.comcast.com" http://localhost:5000/join_guild
+
+sleep 1
+
+docker-compose exec mids \
+  curl -d "name=user_three&uid=user3&email=user3@berkeley.edu" -X POST -H "Host: user3.comcast.com" http://localhost:5000/join_guild
+
+sleep 1
+
+docker-compose exec mids \
+  curl -d "name=user_four&uid=user4&email=user4@berkeley.edu" -X POST -H "Host: user4.comcast.com" http://localhost:5000/join_guild
+
+sleep 1
+
+docker-compose exec mids \
+  curl -d "name=user_five&uid=user4&email=user5@berkeley.edu" -X POST -H "Host: user5.comcast.com" http://localhost:5000/join_guild
+
+sleep 1
+
+docker-compose exec mids \
+  curl -d "name=user_six&uid=user4&email=user6@berkeley.edu" -X POST -H "Host: user6.comcast.com" http://localhost:5000/join_guild
+
+sleep 1
+
+docker-compose exec mids \
+  curl -d "name=user_seven&uid=user7&email=user7@berkeley.edu" -X POST -H "Host: user7.comcast.com" http://localhost:5000/join_guild
+
+sleep 1
+
+docker-compose exec mids \
+  curl -d "name=user_eight&uid=user8&email=user7@berkeley.edu" -X POST -H "Host: user8.comcast.com" http://localhost:5000/join_guild
+
+sleep 1
+
+docker-compose exec mids \
+  curl -d "name=user_nine&uid=user9&email=user7@berkeley.edu" -X POST -H "Host: user9.comcast.com" http://localhost:5000/join_guild
+
+sleep 1
+
+docker-compose exec mids \
+  ab \
+    -n 128 \
+    -H "Host: agitated_darwin.comcast.net" \
+    http://localhost:5000/sell_item?item=sword
+
+sleep 10
+
+docker-compose exec mids \
+  ab \
+    -n 64 \
+    -H "Host: user8.comcast.net" \
+    http://localhost:5000/sell_item?uid=user8%22item=knife
+
+sleep 10
+
+docker-compose exec mids \
+  ab \
+    -n 3 \
+    -H "Host: agitated_darwin.comcast.net" \
+    http://localhost:5000/delete_item?item=crossbow
+
+sleep 10
+
+docker-compose exec mids \
+  ab \
+    -n 20 \
+    -H "Host: user9.comcast.net" \
+    http://localhost:5000/delete_item?uid=user9%22item=knife
+
+sleep 10
+
+docker-compose exec mids \
+  ab \
+    -n 384 \
+    -H "Host: agitated_darwin.comcast.net" \
+    http://localhost:5000/play_game?uid=user9
+
+sleep 10
+
+docker-compose exec mids \
+  ab \
+    -n 128 \
+    -H "Host: agitated_darwin.comcast.net" \
+    http://localhost:5000/play_game?weapon=crossbow

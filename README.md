@@ -1,3 +1,46 @@
+# Project 3
+### Kumar Narayanan, Amanjot Samra, Patrick Old
+
+### What do various files do?
+
+#### *game_api.py*: 
+- This is the flask-based HTTP server that waits to get calls from CURL,
+  Apache Bench etc. making various GET/POST requets. After some validation
+  this file writes a record of key/value pairs into Kafka topic.
+  
+#### *spark_command.py*: 
+- This is the pyspark file that reads data from Kafka, does transformations,
+  writes to parquet file, and also creates Hive tables for queries.
+
+#### *Games_Events_Analysis.ipynb*: 
+- This is the Jupyter NB version of the spark_command.py where we can see the
+  outputs under each command. The notebook also has all the Hive queries that
+  we executed and the results of these queries. At the end the results of Spark
+  streaming is also displayed.
+  
+#### *docker-compose.yml*: 
+- The file that has the needed APPS and their versions, dependencies etc. coded
+  in yml format. 
+
+#### *generate_data*: 
+- A simple bash script that has the needed commands to run various events generating
+  calls that using Apache Bench and CURL. This file generates enough data for 
+  processing by Kafka-Spark-Hive pipeline.
+
+#### *actions_commands.txt*: 
+- This file captures the set of commands needed to run the entire pipeline fully.
+  Included are from bringing up containers to setting up Kafka topic, starting the
+  Flask-based HTTP server, all the way to Spark streaming runs.
+
+#### *filter_events_stream.py*: 
+- This file runs spark in streaming mode to get data from Kafka topic. The file runs 
+  until it's terminated.
+
+#### *write_events_stream_py*: 
+- This is the Spark streaming files that reads from Kafka and writes to parqhuet file
+  running in streaming mode.
+
+
 # Project 3: Understanding User Behavior
 
 - You're a data scientist at a game development company  
