@@ -1,0 +1,77 @@
+## Install Apache Bench - first update and then install utils. Don't install apache2. 
+## We'll use the Flask-based HTTP server.
+sudo apt-get update
+sudo apt-get install apache2-utils
+
+## Get the docker compose going
+docker-compose up -d
+
+## Kafka topic creation
+docker-compose exec kafka \
+  kafka-topics \
+    --create \
+    --topic events \
+    --partitions 1 \
+    --replication-factor 1 \
+    --if-not-exists \
+    --zookeeper zookeeper:32181
+
+## Run the FLASK APP
+docker-compose exec mids \
+  env FLASK_APP=/w205/project-3-kumar-narayanan/game_api.py \
+  flask run --host 0.0.0.0
+
+## Use CURL to generate some data
+curl http://localhost:5000/
+
+## Generate lots of data using Apache Bench
+bash generate_data
+
+## Run Jupyter Notebook w/ PySpark
+docker-compose exec spark env PYSPARK_DRIVER_PYTHON=jupyter \
+PYSPARK_DRIVER_PYTHON_OPTS='notebook --no-browser --port 7000 --ip 0.0.0.0  --allow-root --notebook-dir=/w205/' pyspark
+
+
+## write events to Spark 
+docker-compose exec spark spark-submit /w205/project-3-kumar-narayanan/spark_commands.py
+
+## run Presto
+docker-compose exec presto presto --server presto:8080 --catalog hive --schema default
+
+## To run streaming - this is for the read from Kafka part
+docker-compose exec spark spark-submit /w205/project-3-kumar-narayanan/filter_events_stream.py
+
+## To feed the filter_events_stream.py run the following
+docker-compose exec mids \
+  ab -n 50 -H "Host: agitated_darwin.comcast.net" http://localhost:5000/delete_item?item=crossbow
+
+docker-compose exec mids \
+  ab -n 50 -H "Host: user8.comcast.net" http://localhost:5000/sell_item?uid=user8%22item=knife 
+
+docker-compose exec mids \
+  ab -n 50 -H "Host: user9.comcast.net" http://localhost:5000/play_game?uid=user9 
+
+docker-compose exec mids \
+  ab -n 50 -H "Host: agitated_darwin.comcast.net" http://localhost:5000/play_game?weapon=crossbow 
+
+## Spark Streaming - write to file
+docker-compose exec spark spark-submit /w205/project-3-kumar-narayanan/write_events_stream.py
+
+## Note for the streaming write to work run the ab in loop as shown below.
+while true; do
+  docker-compose exec mids \
+    ab -n 10 -H "Host: agitateddarwin.comcast.com" \
+      http://localhost:5000/play_game?weapon=crossbow
+
+  sleep 5
+
+  docker-compose exec mids \
+  ab -n 10 -H "Host: user8.comcast.net" \
+    http://localhost:5000/sell_item?uid=user8%22item=knife
+
+  sleep 5
+done
+
+## check files in /tmp folder
+docker-compose exec cloudera hadoop fs -ls /tmp/all_events
+
